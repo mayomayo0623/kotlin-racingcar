@@ -11,13 +11,16 @@ import racingcar.service.RacingCar
 class RacingCarTest {
 
     @Test
-    fun carMoveTest() {
-        repeat(100) {
-            val car = Car("test")
-            assertEquals(car.name, "test")
-            assertEquals(0, car.position)
-            car.move()
-            assertTrue(car.position == 0 || car.position == 1)
+    fun racingCarTest() {
+        // given
+        val carNames = "a, b, c"
+        val carList = carNames.split(", ").map { Car(it) }
+        // when
+        val racingCar = RacingCar(carList)
+        // then
+        assertEquals(racingCar.carList.size, 3)
+        racingCar.carList.forEach {
+            assertEquals(it.position, Car.START_POSITION)
         }
     }
 
@@ -34,45 +37,30 @@ class RacingCarTest {
         "'a,b,c', 3"
     )
     fun racingTest(input: String, numberOfRound: Int) {
+        // given
         val carNames = input.split(", ")
         val carList = carNames.map { Car(it) }
         val racingCar = RacingCar(carList)
+        // when
         racingCar.run(numberOfRound)
-        val resultCarList = racingCar.carList
-
-        assertEquals(carNames.size, resultCarList.size)
-        resultCarList.forEach {
-            assert(it.position >= 0)
-            assert(numberOfRound >= it.position)
+        // then
+        assertEquals(carNames.size, racingCar.carList.size)
+        racingCar.carList.forEach {
+            assertTrue(it.position in 0..numberOfRound)
         }
     }
 
     @Test
     fun winnerTest() {
-        val numberOfCar = 3
-        val numberOfRound = 5
-        val carNames = "a, b, c"
-        val carList = carNames.split(", ").map { Car(it) }
+        // given
+        val carList = listOf(Car("a", 0), Car("b", 1), Car("c", 2), Car("d", 2))
         val racingCar = RacingCar(carList)
-
-        assert(racingCar.carList.size == numberOfCar)
-
-        racingCar.run(numberOfRound)
-        val resultCarList = racingCar.carList
+        // when
         val winners = racingCar.getWinners()
-
-        assert(resultCarList.size == numberOfCar)
-        assert(winners.size > 0 && winners.size <= numberOfCar)
-
-        val aPostion = resultCarList[0].position
-        val bPostion = resultCarList[1].position
-        val cPostion = resultCarList[2].position
-        val max = maxOf(aPostion, bPostion, cPostion)
-
-        winners.forEach {
-            assert(it.position == resultCarList.maxOf { it.position })
-            assert(numberOfRound >= it.position)
-            assert(it.position == max)
+        // then
+        winners.forEach() {
+            assertEquals(it.position, 2)
+            assertTrue(it.name == "c" || it.name == "d")
         }
     }
 }

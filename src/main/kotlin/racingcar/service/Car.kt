@@ -2,8 +2,8 @@ package racingcar.service
 
 import kotlin.random.Random
 
-class Car(val name: String) {
-    var position: Int = START_POSITION
+class Car(val name: String, position: Int = START_POSITION) {
+    var position: Int = position
 
     fun move() {
         if (isMovable()) {
